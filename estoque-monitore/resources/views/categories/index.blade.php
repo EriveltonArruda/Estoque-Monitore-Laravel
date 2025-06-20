@@ -1,28 +1,23 @@
-<!DOCTYPE html>
-<html lang="pt-br">
+@extends('layouts.app')
 
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Categorias</title>
-  {{-- Futuramente, podemos adicionar um CSS para deixar mais bonito --}}
-</head>
+@section('title', 'Categorias')
 
-<body>
-  <h1>Lista de Categorias</h1>
+@section('content')
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h1>Lista de Categorias</h1>
+    <a href="{{ route('categorias.create') }}" class="btn btn-primary">Nova Categoria</a>
+  </div>
+
+  <hr>
 
   @if (session('success'))
-    <div style="color: green; border: 1px solid green; padding: 10px; margin-bottom: 1rem;">
+    <div class="alert alert-success">
       {{ session('success') }}
     </div>
   @endif
 
-  <a href="{{ route('categorias.create') }}">Nova Categoria</a>
-
-  <hr>
-
-  <table border="1" style="width:100%;">
-    <thead>
+  <table class="table table-striped table-hover">
+    <thead class="table-dark">
       <tr>
         <th>ID</th>
         <th>Nome</th>
@@ -35,29 +30,24 @@
           <td>{{ $category->id }}</td>
           <td>{{ $category->name }}</td>
           <td>
-            <a href="{{ route('categorias.edit', $category->id) }}">Editar</a>
+            <a href="{{ route('categorias.edit', $category) }}" class="btn btn-sm btn-warning">Editar</a>
             <form action="{{ route('categorias.destroy', $category) }}" method="POST" style="display:inline;"
-              onsubmit="return confirm('Tem certeza que deseja apagar esta categoria? Isso não poderá ser desfeito.');">
+              onsubmit="return confirm('Tem certeza?');">
               @csrf
               @method('DELETE')
-              <button type="submit" style="color: red; border-color: red; cursor: pointer;">Apagar</button>
-            </form>
+              <button type="submit" class="btn btn-sm btn-danger">Apagar</button>
             </form>
           </td>
         </tr>
       @empty
         <tr>
-          <td colspan="3" style="text-align:center;">Nenhuma categoria cadastrada.</td>
+          <td colspan="3" class="text-center">Nenhuma categoria cadastrada.</td>
         </tr>
       @endforelse
     </tbody>
   </table>
 
-  <div style="margin-top: 1rem;">
-    {{-- Links da paginação --}}
+  <div>
     {{ $categories->links() }}
   </div>
-
-</body>
-
-</html>
+@endsection

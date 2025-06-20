@@ -98,8 +98,11 @@ class StockExitController extends Controller {
     /**
      * Display the specified resource.
      */
-    public function show(string $id) {
-        //
+    public function show(StockExit $stock_exit) {
+        // Carrega a saída com suas relações: os itens e os produtos de cada item.
+        $stock_exit->load('items.product');
+
+        return view('stock_exits.show', ['exit' => $stock_exit]);
     }
 
     /**

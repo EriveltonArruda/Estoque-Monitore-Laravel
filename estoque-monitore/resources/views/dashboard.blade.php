@@ -1,145 +1,96 @@
-<!DOCTYPE html>
-<html lang="pt-br">
+{{-- 1. Diz ao Blade para usar o nosso layout mestre --}}
+@extends('layouts.app')
 
-<head>
-  <meta charset="UTF-8">
-  <title>Dashboard - Controle de Estoque</title>
-  {{-- 1. INCLUIR A BIBLIOTECA CHART.JS --}}
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <style>
-    body {
-      font-family: sans-serif;
-      background-color: #f4f6f9;
-    }
+{{-- 2. Define o título específico para esta página --}}
+@section('title', 'Página Inicial')
 
-    .main-content {
-      /* <-- NOSSO NOVO CONTÊINER */
-      max-width: 1400px;
-      margin: 20px auto;
-      /* 20px de margem em cima/embaixo, auto nas laterais para centralizar */
-      padding: 20px;
-    }
+{{-- 3. Inicia a seção de conteúdo que será injetada no @yield('content') --}}
+@section('content')
+  <h1>Página Inicial</h1>
+  <p>Visão Geral do Controle de Estoque</p>
+  <hr>
 
-    .card-container {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 20px;
-      font-family: sans-serif;
-    }
-
-    .card {
-      border-radius: 8px;
-      padding: 20px;
-      color: white;
-      width: 220px;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    }
-
-    .card h3 {
-      margin-top: 0;
-    }
-
-    .card p {
-      font-size: 24px;
-      font-weight: bold;
-      margin-bottom: 0;
-    }
-
-    .bg-blue {
-      background-color: #007bff;
-    }
-
-    .bg-red {
-      background-color: #dc3545;
-    }
-
-    .bg-yellow {
-      background-color: #ffc107;
-    }
-
-    .bg-green {
-      background-color: #28a745;
-    }
-  </style>
-</head>
-
-<body>
-  <div class="main-content">
-    <h1>Página Inicial</h1>
-    <p>Visão Geral do Controle de Estoque</p>
-    <hr>
-
-    <div class="card-container">
-      <div class="card bg-blue">
-        <h3>Produtos Cadastrados</h3>
-        <p>{{ $totalProducts }}</p>
-      </div>
-      <div class="card bg-blue">
-        <h3>Total de Itens no Estoque</h3>
-        <p>{{ $totalItemsInStock }}</p>
-      </div>
-      <div class="card bg-red">
-        <h3>Produtos com Estoque Zerado</h3>
-        <p>{{ $productsWithZeroStock }}</p>
-      </div>
-      <div class="card bg-yellow">
-        <h3>Produtos com Estoque Baixo</h3>
-        <p>{{ $productsLowStock }}</p>
-      </div>
-      <div class="card bg-green">
-        <h3>Valor do Estoque (Venda)</h3>
-        <p>R$ {{ number_format($stockValue, 2, ',', '.') }}</p>
+  {{-- O código dos cards e do gráfico que já fizemos --}}
+  {{-- (Vamos remover os estilos inline, pois o Bootstrap e nosso CSS principal cuidarão disso) --}}
+  <div class="row">
+    <div class="col-lg-3 col-md-6 mb-4">
+      <div class="card text-white bg-primary">
+        <div class="card-body">
+          <h5 class="card-title">Produtos Cadastrados</h5>
+          <p class="card-text fs-4 fw-bold">{{ $totalProducts }}</p>
+        </div>
       </div>
     </div>
-
-    {{-- os gráficos virão aqui --}}
-    <hr style="margin-top: 40px;">
-
-    {{-- 2. ADICIONAR A ÁREA DO GRÁFICO --}}
-    <div style="width: 80%; margin-top: 20px;">
-      <h3>Entradas e Saídas (Últimos 10 Dias)</h3>
-      <canvas id="entriesExitsChart"></canvas>
+    <div class="col-lg-3 col-md-6 mb-4">
+      <div class="card text-white bg-info">
+        <div class="card-body">
+          <h5 class="card-title">Itens no Estoque</h5>
+          <p class="card-text fs-4 fw-bold">{{ $totalItemsInStock }}</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-3 col-md-6 mb-4">
+      <div class="card text-white bg-danger">
+        <div class="card-body">
+          <h5 class="card-title">Estoque Zerado</h5>
+          <p class="card-text fs-4 fw-bold">{{ $productsWithZeroStock }}</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-3 col-md-6 mb-4">
+      <div class="card text-white bg-warning">
+        <div class="card-body">
+          <h5 class="card-title">Estoque Baixo</h5>
+          <p class="card-text fs-4 fw-bold">{{ $productsLowStock }}</p>
+        </div>
+      </div>
     </div>
   </div>
 
-  {{-- 3. ADICIONAR O SCRIPT PARA INICIAR O GRÁFICO --}}
-  <script>
-    // Pega o contexto do canvas
-    const ctx = document.getElementById('entriesExitsChart');
+  <div class="row">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">Entradas e Saídas (Últimos 10 Dias)</h5>
+          <div class="chart-container"> {{-- <-- NOSSA "CAIXA" DE VOLTA --}}
+            <canvas id="entriesExitsChart"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 
-    // Cria o gráfico
-    new Chart(ctx, {
-      type: 'line', // Tipo de gráfico
-      data: {
-        labels: @json($chartLabels),
-        datasets: [{
-            label: 'Entradas',
-            data: @json($entriesData),
-            borderColor: 'blue',
-            backgroundColor: 'rgba(0, 0, 255, 0.1)',
-            fill: true,
-            tension: 0.1
-          },
-          {
-            label: 'Saídas',
-            data: @json($exitsData),
-            borderColor: 'green',
-            backgroundColor: 'rgba(0, 255, 0, 0.1)',
-            fill: true,
-            tension: 0.1
-          }
-        ]
-      },
-      options: {
-        scales: {
-          y: {
-            beginAtZero: true
-          }
+  @push('scripts')
+    {{-- 1. Carrega a biblioteca Chart.js apenas nesta página --}}
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    {{-- 2. Inicia o nosso gráfico --}}
+    <script>
+      const ctx = document.getElementById('entriesExitsChart');
+      new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: @json($chartLabels),
+          datasets: [{
+              label: 'Entradas',
+              data: @json($entriesData),
+              borderColor: '#0d6efd',
+              fill: false,
+            },
+            {
+              label: 'Saídas',
+              data: @json($exitsData),
+              borderColor: '#198754',
+              fill: false,
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
         }
-      }
-    });
-  </script>
-
-</body>
-
-</html>
+      });
+    </script>
+  @endpush
+@endsection
+{{-- 4. Finaliza a seção de conteúdo --}}

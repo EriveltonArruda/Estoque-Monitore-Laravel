@@ -1,31 +1,30 @@
-<!DOCTYPE html>
-<html lang="pt-br">
+@extends('layouts.app')
 
-<head>
-  <meta charset="UTF-8">
-  <title>Produtos</title>
-</head>
+@section('title', 'Produtos')
 
-<body>
-  <h1>Lista de Produtos</h1>
-  <a href="{{ route('produtos.create') }}">Novo Produto</a>
+@section('content')
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h1>Lista de Produtos</h1>
+    <a href="{{ route('produtos.create') }}" class="btn btn-primary">Novo Produto</a>
+  </div>
+
   <hr>
 
   @if (session('success'))
-    <div style="color: green; border: 1px solid green; padding: 10px; margin-bottom: 1rem;">
+    <div class="alert alert-success">
       {{ session('success') }}
     </div>
   @endif
 
-  <table border="1" style="width:100%;">
-    <thead>
+  <table class="table table-striped table-hover">
+    <thead class="table-dark">
       <tr>
         <th>ID</th>
         <th>Ref.</th>
         <th>Nome</th>
         <th>Categoria</th>
         <th>Estoque</th>
-        <th>Preço Compra</th>
+        <th>Preço Venda</th>
         <th>Ações</th>
       </tr>
     </thead>
@@ -35,31 +34,28 @@
           <td>{{ $product->id }}</td>
           <td>{{ $product->reference }}</td>
           <td>{{ $product->name }}</td>
-          {{-- Aqui usamos a relação que criamos para pegar o nome da categoria --}}
           <td>{{ $product->category->name ?? 'Sem Categoria' }}</td>
           <td>{{ $product->stock_quantity }}</td>
           <td>R$ {{ number_format($product->sale_price, 2, ',', '.') }}</td>
           <td>
-            <a href="{{ route('produtos.edit', $product) }}">Editar</a>
+            <a href="{{ route('produtos.edit', $product) }}" class="btn btn-sm btn-warning">Editar</a>
             <form action="{{ route('produtos.destroy', $product) }}" method="POST" style="display:inline;"
-              onsubmit="return confirm('Tem certeza que deseja apagar este produto? Esta ação não pode ser desfeita.');">
+              onsubmit="return confirm('Tem certeza?');">
               @csrf
               @method('DELETE')
-              <button type="submit">Apagar</button>
+              <button type="submit" class="btn btn-sm btn-danger">Apagar</button>
             </form>
           </td>
         </tr>
       @empty
         <tr>
-          <td colspan="7" style="text-align:center;">Nenhum produto cadastrado.</td>
+          <td colspan="7" class="text-center">Nenhum produto cadastrado.</td>
         </tr>
       @endforelse
     </tbody>
   </table>
 
-  <div style="margin-top: 1rem;">
+  <div>
     {{ $products->links() }}
   </div>
-</body>
-
-</html>
+@endsection

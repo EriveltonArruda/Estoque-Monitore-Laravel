@@ -1,28 +1,23 @@
-<!DOCTYPE html>
-<html lang="pt-br">
+@extends('layouts.app')
 
-<head>
-  <meta charset="UTF--8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Fornecedores</title>
-</head>
+@section('title', 'Fornecedores')
 
-<body>
-  <h1>Lista de Fornecedores</h1>
-
-  <a href="{{ route('fornecedores.create') }}">Novo Fornecedor</a>
+@section('content')
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h1>Lista de Fornecedores</h1>
+    <a href="{{ route('fornecedores.create') }}" class="btn btn-primary">Novo Fornecedor</a>
+  </div>
 
   <hr>
 
-  {{-- Bloco para futuras mensagens de sucesso --}}
   @if (session('success'))
-    <div style="color: green; border: 1px solid green; padding: 10px; margin-bottom: 1rem;">
+    <div class="alert alert-success">
       {{ session('success') }}
     </div>
   @endif
 
-  <table border="1" style="width:100%;">
-    <thead>
+  <table class="table table-striped table-hover">
+    <thead class="table-dark">
       <tr>
         <th>ID</th>
         <th>Nome Fantasia</th>
@@ -39,27 +34,24 @@
           <td>{{ $supplier->city }} / {{ $supplier->state }}</td>
           <td>{{ $supplier->document }}</td>
           <td>
-            <a href="{{ route('fornecedores.edit', $supplier) }}">Editar</a>
+            <a href="{{ route('fornecedores.edit', $supplier) }}" class="btn btn-sm btn-warning">Editar</a>
             <form action="{{ route('fornecedores.destroy', $supplier) }}" method="POST" style="display:inline;"
-              onsubmit="return confirm('Tem certeza que deseja apagar este fornecedor?');">
+              onsubmit="return confirm('Tem certeza?');">
               @csrf
               @method('DELETE')
-              <button type="submit" style="color: red; border-color: red; cursor: pointer;">Apagar</button>
+              <button type="submit" class="btn btn-sm btn-danger">Apagar</button>
             </form>
           </td>
         </tr>
       @empty
         <tr>
-          <td colspan="5" style="text-align:center;">Nenhum fornecedor cadastrado.</td>
+          <td colspan="5" class="text-center">Nenhum fornecedor cadastrado.</td>
         </tr>
       @endforelse
     </tbody>
   </table>
 
-  <div style="margin-top: 1rem;">
+  <div>
     {{ $suppliers->links() }}
   </div>
-
-</body>
-
-</html>
+@endsection

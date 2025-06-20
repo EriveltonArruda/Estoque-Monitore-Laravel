@@ -1,24 +1,23 @@
-<!DOCTYPE html>
-<html lang="pt-br">
+@extends('layouts.app')
 
-<head>
-  <meta charset="UTF-8">
-  <title>Saídas no Estoque</title>
-</head>
+@section('title', 'Saídas no Estoque')
 
-<body>
-  <h1>Saídas no Estoque</h1>
-  <a href="{{ route('saidas.create') }}">Nova Saída</a>
+@section('content')
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h1>Saídas no Estoque</h1>
+    <a href="{{ route('saidas.create') }}" class="btn btn-primary">Nova Saída</a>
+  </div>
+
   <hr>
 
   @if (session('success'))
-    <div style="color: green; border: 1px solid green; padding: 10px; margin-bottom: 1rem;">
+    <div class="alert alert-success">
       {{ session('success') }}
     </div>
   @endif
 
-  <table border="1" style="width:100%;">
-    <thead>
+  <table class="table table-striped table-hover">
+    <thead class="table-dark">
       <tr>
         <th>ID</th>
         <th>Tipo</th>
@@ -37,20 +36,19 @@
           <td>R$ {{ number_format($exit->total_value, 2, ',', '.') }}</td>
           <td>{{ \Carbon\Carbon::parse($exit->exit_date)->format('d/m/Y') }}</td>
           <td>
-            <a href="#">Ver Itens</a>
+            {{-- Vamos fazer este link funcionar no passo 3 --}}
+            <a href="{{ route('saidas.show', $exit) }}" class="btn btn-sm btn-info">Ver Itens</a>
           </td>
         </tr>
       @empty
         <tr>
-          <td colspan="6" style="text-align:center;">Nenhuma saída registrada.</td>
+          <td colspan="6" class="text-center">Nenhuma saída registrada.</td>
         </tr>
       @endforelse
     </tbody>
   </table>
 
-  <div style="margin-top: 1rem;">
+  <div>
     {{ $exits->links() }}
   </div>
-</body>
-
-</html>
+@endsection

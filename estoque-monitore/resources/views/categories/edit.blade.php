@@ -1,19 +1,13 @@
-<!DOCTYPE html>
-<html lang="pt-br">
+@extends('layouts.app')
 
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Nova Categoria</title>
-</head>
+@section('title', 'Editar Categoria')
 
-<body>
+@section('content')
   <h1>Editar Categoria</h1>
+  <hr>
 
-  {{-- Se houver qualquer erro de validação, eles serão mostrados aqui --}}
   @if ($errors->any())
-    <div style="color: red;">
-      <strong>Opa!</strong> Houve alguns problemas com os dados.<br><br>
+    <div class="alert alert-danger">
       <ul>
         @foreach ($errors->all() as $error)
           <li>{{ $error }}</li>
@@ -22,29 +16,19 @@
     </div>
   @endif
 
-  {{-- @dd($category) LINHA DE DEBUG --}}
-
   <form action="{{ route('categorias.update', $category) }}" method="POST">
     @csrf
-    @method('PUT') {{-- Informa ao Laravel que a operação é de atualização --}}
-    @csrf
+    @method('PUT')
+    <div class="mb-3">
+      <label for="name" class="form-label">Nome:</label>
+      <input type="text" id="name" name="name" class="form-control" value="{{ old('name', $category->name) }}">
+    </div>
+    <div class="mb-3">
+      <label for="description" class="form-label">Descrição:</label>
+      <textarea id="description" name="description" class="form-control" rows="3">{{ old('description', $category->description) }}</textarea>
+    </div>
 
-    <div>
-      <label for="name">Nome:</label><br>
-      <input type="text" id="name" name="name" value="{{ old('name', $category->name) }}">
-    </div>
-    <br>
-    <div>
-      <label for="description">Descrição:</label><br>
-      <textarea id="description" name="description" rows="4">{{ old('description', $category->description) }}</textarea>
-    </div>
-    <br>
-    <div>
-      <button type="submit">Salvar Categoria</button>
-      <a href="{{ route('categorias.index') }}">Cancelar</a>
-    </div>
+    <button type="submit" class="btn btn-success">Salvar Alterações</button>
+    <a href="{{ route('categorias.index') }}" class="btn btn-secondary">Cancelar</a>
   </form>
-
-</body>
-
-</html>
+@endsection
