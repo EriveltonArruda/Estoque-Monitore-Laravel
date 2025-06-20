@@ -95,6 +95,11 @@
     <h5>Movimentação</h5>
     <a href="{{ route('entradas.index') }}">Entradas</a>
     <a href="{{ route('saidas.index') }}">Saídas</a>
+
+    {{-- NOVA SEÇÃO DE ADMINISTRAÇÃO --}}
+    <h5>Administração</h5>
+    {{-- Futuramente poderíamos adicionar: <a href="#">Usuários</a> --}}
+    {{-- Futuramente poderíamos adicionar: <a href="#">Logs de Atividades</a> --}}
   </div>
 
   {{-- INVÓLUCRO PARA O CONTEÚDO PRINCIPAL E A NAVBAR --}}
@@ -117,12 +122,20 @@
               </a>
               <ul class="dropdown-menu dropdown-menu-end">
                 {{-- TODO: Adicionar link para a página de perfil --}}
-                <li><a class="dropdown-item" href="#">Meu Perfil</a></li>
+                <li><a class="dropdown-item" href="{{ route('profile.edit') }}">Meu Perfil</a></li>
                 <li>
                   <hr class="dropdown-divider">
                 </li>
-                {{-- TODO: Adicionar a rota de logout --}}
-                <li><a class="dropdown-item" href="#">Sair</a></li>
+                <li>
+                  <form method="POST" action="{{ route('logout') }}" id="logout-form">
+                    @csrf
+                    {{-- Usamos um link que submete o formulário via JS, mas de forma diferente --}}
+                    <a class="dropdown-item" href="#"
+                      onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                      Sair
+                    </a>
+                  </form>
+                </li>
               </ul>
             </li>
           </ul>
